@@ -1,15 +1,15 @@
 <?php
 
 /*
- * This file is part of flarumite/simple-discussion-views.
+ * This file is part of fof/discussion-views.
  *
- * Copyright (c) 2020 Flarumite.
+ * Copyright (c) FriendsOfFlarum
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Flarumite\DiscussionViews;
+namespace FoF\DiscussionViews;
 
 use Flarum\Api\Controller;
 use Flarum\Api\Serializer\DiscussionSerializer;

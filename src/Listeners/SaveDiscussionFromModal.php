@@ -1,15 +1,15 @@
 <?php
 
 /*
- * This file is part of flarumite/simple-discussion-views.
+ * This file is part of fof/discussion-views.
  *
- * Copyright (c) 2020 Flarumite.
+ * Copyright (c) FriendsOfFlarum
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Flarumite\DiscussionViews\Listeners;
+namespace FoF\DiscussionViews\Listeners;
 
 use Flarum\Discussion\Event\Saving;
 
