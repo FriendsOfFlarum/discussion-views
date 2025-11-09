@@ -18,6 +18,10 @@ use Flarum\Discussion\Event\Saving;
 use Flarum\Discussion\Filter\DiscussionFilterer;
 use Flarum\Discussion\Search\DiscussionSearcher;
 use Flarum\Extend;
+use Flarum\Api\Context;
+use Flarum\Api\Endpoint;
+use Flarum\Api\Resource;
+use Flarum\Api\Schema;
 
 return [
     (new Extend\Frontend('forum'))
@@ -35,15 +39,18 @@ return [
     (new Extend\Event())
         ->listen(Saving::class, Listeners\SaveDiscussionFromModal::class),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiSerializer(DiscussionSerializer::class))
         ->attribute('views', function (DiscussionSerializer $serializer, Discussion $discussion) {
             return $discussion->view_count;
         })
         ->attributes(AddAttributesBasedOnPermission::class),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\ShowDiscussionController::class))
         ->prepareDataForSerialization(Listeners\AddDiscussionViewHandler::class),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(Controller\ListDiscussionsController::class))
         ->addSortField('view_count'),
 
