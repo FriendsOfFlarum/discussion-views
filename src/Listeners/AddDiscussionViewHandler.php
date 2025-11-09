@@ -24,32 +24,14 @@ use Psr\Http\Message\ServerRequestInterface;
 class AddDiscussionViewHandler
 {
     /**
-     * @var Dispatcher
-     */
-    public $bus;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    public $settings;
-
-    /**
-     * @var CrawlerDetect
-     */
-    public $crawler;
-
-    /**
      * Allows disabling the handler ahead of any internal API calls.
      *
      * @var bool
      */
     public static $enabled = true;
 
-    public function __construct(Dispatcher $bus, SettingsRepositoryInterface $settings, CrawlerDetect $crawler)
+    public function __construct(public Dispatcher $bus, public SettingsRepositoryInterface $settings, public CrawlerDetect $crawler)
     {
-        $this->bus = $bus;
-        $this->settings = $settings;
-        $this->crawler = $crawler;
     }
 
     public function __invoke(ShowDiscussionController $controller, &$data, ServerRequestInterface $request)
