@@ -12,32 +12,16 @@
 namespace FoF\DiscussionViews\Listeners;
 
 use Carbon\Carbon;
-use Flarum\Api\Controller\ShowDiscussionController;
-use Flarum\Http\RequestUtil;
+use Flarum\Api\Context;
+use Flarum\Discussion\Discussion;
 use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\DiscussionViews\Events\DiscussionWasViewed;
 use FoF\DiscussionViews\Helpers;
 use Illuminate\Contracts\Events\Dispatcher;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
-use Psr\Http\Message\ServerRequestInterface;
 
 class AddDiscussionViewHandler
 {
-    /**
-     * @var Dispatcher
-     */
-    public $bus;
-
-    /**
-     * @var SettingsRepositoryInterface
-     */
-    public $settings;
-
-    /**
-     * @var CrawlerDetect
-     */
-    public $crawler;
-
     /**
      * Allows disabling the handler ahead of any internal API calls.
      *
@@ -45,32 +29,26 @@ class AddDiscussionViewHandler
      */
     public static $enabled = true;
 
-    public function __construct(Dispatcher $bus, SettingsRepositoryInterface $settings, CrawlerDetect $crawler)
+    public function __construct(public Dispatcher $bus, public SettingsRepositoryInterface $settings, public CrawlerDetect $crawler)
     {
-        $this->bus = $bus;
-        $this->settings = $settings;
-        $this->crawler = $crawler;
     }
 
-    public function __invoke(ShowDiscussionController $controller, &$data, ServerRequestInterface $request)
+    public function __invoke(Context $context, Discussion $discussion): void
     {
         if (static::$enabled === false) {
             return;
         }
 
-        $actor = RequestUtil::getActor($request);
+        $actor = $context->getActor();
+        $request = $context->request;
 
         if ($this->settings->get('fsdv.ignore-crawlers') && $this->isCrawler($request->getHeader('User-Agent'))) {
             return;
         }
 
-        /**
-         * @var \Flarum\Discussion\Discussion $current_discussion
-         */
-        $current_discussion = $data;
-        $current_discussion->increment('view_count', 1);
+        $discussion->increment('view_count', 1);
 
-        $this->bus->dispatch(new DiscussionWasViewed($actor, $current_discussion, Helpers::getIpAddress(), Helpers::getUserAgentString(), Carbon::now()));
+        $this->bus->dispatch(new DiscussionWasViewed($actor, $discussion, Helpers::getIpAddress(), Helpers::getUserAgentString(), Carbon::now()));
     }
 
     private function isCrawler(array $agents): bool

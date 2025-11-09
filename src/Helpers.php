@@ -17,14 +17,18 @@ class Helpers
 {
     public static function getIpAddress(): ?string
     {
-        return Arr::get($_SERVER, 'HTTP_CLIENT_IP')
+        $ip = Arr::get($_SERVER, 'HTTP_CLIENT_IP')
             ?? Arr::get($_SERVER, 'HTTP_CF_CONNECTING_IP')
             ?? Arr::get($_SERVER, 'HTTP_X_FORWARDED_FOR')
             ?? Arr::get($_SERVER, 'REMOTE_ADDR');
+
+        return is_string($ip) ? $ip : null;
     }
 
     public static function getUserAgentString(): ?string
     {
-        return Arr::get($_SERVER, 'HTTP_USER_AGENT');
+        $userAgent = Arr::get($_SERVER, 'HTTP_USER_AGENT');
+
+        return is_string($userAgent) ? $userAgent : null;
     }
 }
