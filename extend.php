@@ -59,10 +59,7 @@ return [
 
     (new Extend\ServiceProvider())
         ->register(Provider\DiscussionViewsProvider::class),
-
-    (new Extend\SimpleFlarumSearch(DiscussionSearcher::class))
-        ->addGambit(Search\PopularFilterGambit::class),
-
-    (new Extend\Filter(DiscussionFilterer::class))
-        ->addFilter(Search\PopularFilterGambit::class),
+    (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
+        ->addFilter(DiscussionSearcher::class, Search\PopularFilter::class)
+        ->addFilter(DiscussionSearcher::class, Search\PopularFilter::class),
 ];

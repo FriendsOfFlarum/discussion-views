@@ -11,14 +11,12 @@
 
 namespace FoF\DiscussionViews\Search;
 
-use Flarum\Filter\FilterInterface;
-use Flarum\Filter\FilterState;
-use Flarum\Search\AbstractRegexGambit;
+use Flarum\Search\Filter\FilterInterface;
 use Flarum\Search\SearchState;
 use Flarum\User\User;
 use Illuminate\Database\Query\Builder;
 
-class PopularFilterGambit extends AbstractRegexGambit implements FilterInterface
+class PopularFilter implements FilterInterface
 {
     /**
      * {@inheritDoc}
@@ -31,17 +29,13 @@ class PopularFilterGambit extends AbstractRegexGambit implements FilterInterface
     /**
      * {@inheritDoc}
      */
-    public function getGambitPattern()
-    {
-        return 'is:popular';
-    }
 
     /**
      * {@inheritDoc}
      */
-    public function filter(FilterState $filterState, string $filterValue, bool $negate)
+    public function filter(SearchState $state, array|string $value, bool $negate): void
     {
-        $this->sort($filterState->getQuery(), $filterState->getActor(), $negate);
+        $this->sort($state->getQuery(), $state->getActor(), $negate);
     }
 
     protected function sort(Builder $query, User $actor, bool $negate)
@@ -54,8 +48,4 @@ class PopularFilterGambit extends AbstractRegexGambit implements FilterInterface
      * @param array       $matches
      * @param             $negate
      */
-    protected function conditions(SearchState $search, array $matches, $negate)
-    {
-        $this->sort($search->getQuery(), $search->getActor(), $negate);
-    }
 }
