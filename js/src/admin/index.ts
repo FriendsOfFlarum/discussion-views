@@ -1,7 +1,7 @@
 import app from 'flarum/admin/app';
 
 app.initializers.add('fof-discussion-views', () => {
-  app.extensionData
+  app.registry
     .for('fof-discussion-views')
     .registerPermission(
       {

@@ -1,9 +1,10 @@
+import Form from 'flarum/common/components/Form';
 import app from 'flarum/forum/app';
-import Modal from 'flarum/common/components/Modal';
+import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import Stream from 'flarum/common/utils/Stream';
 
-export default class ResetDiscussionViewsModal extends Modal {
+export default class ResetDiscussionViewsModal extends FormModal {
   oninit(vnode) {
     super.oninit(vnode);
 
@@ -15,7 +16,7 @@ export default class ResetDiscussionViewsModal extends Modal {
   content() {
     return (
       <div className="Modal-body">
-        <div className="Form Form--centered">
+        <Form className="Form--centered">
           <div className="Form-group">
             <label>{app.translator.trans('fof-discussion-views.forum.modal_resetviews.label')}</label>
             <input className="FormControl" type="number" min="0" bidi={this.newViewsCount} />
@@ -25,7 +26,7 @@ export default class ResetDiscussionViewsModal extends Modal {
               {app.translator.trans('fof-discussion-views.forum.modal_resetviews.submit')}
             </Button>
           </div>
-        </div>
+        </Form>
       </div>
     );
   }

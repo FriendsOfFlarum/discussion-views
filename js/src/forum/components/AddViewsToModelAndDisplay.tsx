@@ -1,7 +1,7 @@
 import { extend } from 'flarum/common/extend';
 import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import abbreviateNumber from 'flarum/common/utils/abbreviateNumber';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import type Mithril from 'mithril';
 import ItemList from 'flarum/common/utils/ItemList';
 
@@ -11,7 +11,7 @@ export default function () {
     items.add(
       'discussion-views',
       <span>
-        {icon('far fa-eye')} {abbreviateNumber(views)}
+        <Icon name="far fa-eye" /> {abbreviateNumber(views)}
       </span>
     );
   });
