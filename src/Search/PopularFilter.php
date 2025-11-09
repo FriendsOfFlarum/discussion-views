@@ -11,11 +11,13 @@
 
 namespace FoF\DiscussionViews\Search;
 
+use Flarum\Search\Database\DatabaseSearchState;
 use Flarum\Search\Filter\FilterInterface;
 use Flarum\Search\SearchState;
-use Flarum\User\User;
-use Illuminate\Database\Query\Builder;
 
+/**
+ * @implements FilterInterface<DatabaseSearchState>
+ */
 class PopularFilter implements FilterInterface
 {
     /**
@@ -26,26 +28,8 @@ class PopularFilter implements FilterInterface
         return 'popular';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-
-    /**
-     * {@inheritDoc}
-     */
     public function filter(SearchState $state, array|string $value, bool $negate): void
     {
-        $this->sort($state->getQuery(), $state->getActor(), $negate);
+        $state->getQuery()->orderBy('view_count', $negate ? 'asc' : 'desc');
     }
-
-    protected function sort(Builder $query, User $actor, bool $negate)
-    {
-        $query->orderBy('view_count', 'desc');
-    }
-
-    /**
-     * @param SearchState $search
-     * @param array       $matches
-     * @param             $negate
-     */
 }

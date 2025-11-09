@@ -11,17 +11,14 @@
 
 namespace FoF\DiscussionViews;
 
-use Flarum\Api\Controller;
-use Flarum\Api\Serializer\DiscussionSerializer;
-use Flarum\Discussion\Discussion;
-use Flarum\Discussion\Event\Saving;
-use Flarum\Discussion\Filter\DiscussionFilterer;
-use Flarum\Discussion\Search\DiscussionSearcher;
-use Flarum\Extend;
 use Flarum\Api\Context;
 use Flarum\Api\Endpoint;
-use Flarum\Api\Resource;
+use Flarum\Api\Resource\DiscussionResource;
 use Flarum\Api\Schema;
+use Flarum\Api\Sort\SortColumn;
+use Flarum\Discussion\Discussion;
+use Flarum\Discussion\Search\DiscussionSearcher;
+use Flarum\Extend;
 
 return [
     (new Extend\Frontend('forum'))
@@ -36,30 +33,44 @@ return [
     (new Extend\Model(Discussion::class))
         ->cast('view_count', 'int'),
 
-    (new Extend\Event())
-        ->listen(Saving::class, Listeners\SaveDiscussionFromModal::class),
+    (new Extend\Policy())
+        ->modelPolicy(Discussion::class, Access\DiscussionPolicy::class),
 
-    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
-    (new Extend\ApiSerializer(DiscussionSerializer::class))
-        ->attribute('views', function (DiscussionSerializer $serializer, Discussion $discussion) {
-            return $discussion->view_count;
+    (new Extend\ApiResource(DiscussionResource::class))
+        ->fields(function () {
+            return [
+                Schema\Integer::make('views')
+                    ->property('view_count')
+                    ->writable(function (Discussion $discussion, Context $context) {
+                        return $context->updating()
+                            && $context->getActor()->can('resetViews', $discussion);
+                    })
+                    ->set(function (Discussion $discussion, int $value) {
+                        $discussion->view_count = $value;
+                    }),
+                Schema\Boolean::make('canReset')
+                    ->get(function (Discussion $model, Context $context) {
+                        return $context->getActor()->can('resetViews', $model);
+                    })
+                    ->visible(function (Discussion $model, Context $context) {
+                        return $context->getActor()->can('resetViews', $model);
+                    }),
+            ];
         })
-        ->attributes(AddAttributesBasedOnPermission::class),
-
-    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
-    (new Extend\ApiController(Controller\ShowDiscussionController::class))
-        ->prepareDataForSerialization(Listeners\AddDiscussionViewHandler::class),
-
-    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
-    (new Extend\ApiController(Controller\ListDiscussionsController::class))
-        ->addSortField('view_count'),
+        ->sorts(fn () => [
+            SortColumn::make('view_count')
+                ->descendingAlias('most_viewed')
+                ->ascendingAlias('least_viewed'),
+        ])
+        ->endpoint('show', function (Endpoint\Show $endpoint) {
+            return $endpoint->beforeSerialization(function (Context $context, Discussion $discussion) {
+                resolve(Listeners\AddDiscussionViewHandler::class)($context, $discussion);
+            });
+        }),
 
     (new Extend\Settings())
         ->default('fsdv.ignore-crawlers', true),
 
-    (new Extend\ServiceProvider())
-        ->register(Provider\DiscussionViewsProvider::class),
     (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
-        ->addFilter(DiscussionSearcher::class, Search\PopularFilter::class)
         ->addFilter(DiscussionSearcher::class, Search\PopularFilter::class),
 ];
