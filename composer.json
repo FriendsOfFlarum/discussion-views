@@ -17,7 +17,7 @@
     "support": {
         "issues": "https://github.com/friendsofflarum/discussion-views/issues",
         "source": "https://github.com/friendsofflarum/discussion-views",
-        "forum": "https://discuss.flarum.org/d/24002"
+        "forum": "https://discuss.flarum.org/d/38394"
     },
     "autoload": {
         "psr-4": {
