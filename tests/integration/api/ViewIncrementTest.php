@@ -100,7 +100,10 @@ class ViewIncrementTest extends TestCase
     #[Test]
     public function multiple_views_increment_count_multiple_times()
     {
-        // View the discussion 3 times
+        // Requests carry no REMOTE_ADDR and no actor, so each of these is an
+        // unattributable view: there is nothing to dedupe against and every one
+        // counts. A viewer that can be identified is counted once instead —
+        // see ViewDedupeTest.
         for ($i = 0; $i < 3; $i++) {
             $this->send(
                 $this->request('GET', '/api/discussions/1')

@@ -69,7 +69,10 @@ return [
         }),
 
     (new Extend\Settings())
-        ->default('fsdv.ignore-crawlers', true),
+        ->default('fsdv.ignore-crawlers', true)
+        // Seconds a viewer is remembered before the same discussion counts for
+        // them again. Zero counts every view.
+        ->default('fsdv.dedupe-ttl', 900),
 
     (new Extend\SearchDriver(\Flarum\Search\Database\DatabaseSearchDriver::class))
         ->addFilter(DiscussionSearcher::class, Search\PopularFilter::class),
