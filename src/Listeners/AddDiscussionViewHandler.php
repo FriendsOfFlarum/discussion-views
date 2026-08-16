@@ -70,7 +70,8 @@ class AddDiscussionViewHandler
      */
     private function countable(?int $actorId, int $discussionId): bool
     {
-        $ttl = (int) $this->settings->get('fsdv.dedupe-ttl');
+        $setting = $this->settings->get('fsdv.dedupe-ttl');
+        $ttl = is_numeric($setting) ? (int) $setting : 0;
 
         // Zero (or a nonsensical value) turns deduplication off, counting every
         // view as the extension did before it was introduced.
