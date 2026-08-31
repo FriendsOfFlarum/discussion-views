@@ -1,8 +1,25 @@
 core:
+  # Sort names are needed in two places that do not share a namespace: the
+  # forum's sorting control reads `core.forum.index_sort.{key}_button`, while
+  # the admin panel's tag default-sort dropdown reads
+  # `core.lib.index_sort.{key}_button` — and the `forum` namespace is not
+  # shipped to the admin frontend. Core registers its own sort labels under
+  # both for exactly this reason, so ours have to be in both too. The real
+  # strings live under `ref` and each namespace points at them, so the two can
+  # never drift apart.
+  ref:
+    most_viewed: Most Viewed
+    least_viewed: Least Viewed
+
   forum:
     index_sort:
-      most_viewed_button: Most Viewed
-      least_viewed_button: Least Viewed
+      most_viewed_button: => core.ref.most_viewed
+      least_viewed_button: => core.ref.least_viewed
+
+  lib:
+    index_sort:
+      most_viewed_button: => core.ref.most_viewed
+      least_viewed_button: => core.ref.least_viewed
 
 fof-discussion-views:
   forum:
