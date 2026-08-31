@@ -1,7 +1,34 @@
+// Width of the view-count badge, and the gap kept between it and the title.
+@discussion-views-width: 65px;
+@discussion-views-gap: 8px;
+
+// The badge below is taken out of flow and pinned to the right edge of the list
+// item, but nothing reserves the space it occupies. Core only makes that
+// reservation on phones — `.DiscussionListItem-main { padding-right: 48px }`
+// sits inside an `@media @phone` block — so everywhere else a long title runs
+// underneath the count. It is clearest in the search modal, where
+// `.MinimalDiscussionListItem` titles are a single `nowrap` line that
+// ellipsises at the container edge rather than before the badge.
+//
+// `margin-right` is measured from the same edge the badge is anchored to, so
+// the two stay in step without duplicating the ancestor's padding in the
+// arithmetic. `min-width: 0` lets the flex item shrink far enough for the
+// title's own overflow handling to engage.
+.DiscussionListItem-main {
+  min-width: 0;
+  margin-right: (@discussion-views-width + @discussion-views-gap);
+
+  @media @phone {
+    // The phone layout below moves the badge onto its own row, so the title
+    // gets the full width back.
+    margin-right: 0;
+  }
+}
+
 .item-discussion-views {
   font-size: 14px;
   position: absolute;
-  width: 65px;
+  width: @discussion-views-width;
   right: 0;
   color: var(--muted-color);
   text-decoration: none;
